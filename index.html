@@ -11,7 +11,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
     <style>
     body {
-        font-family: Monospace;
+        font-family: "Microsoft YaHei" ! important;
         background-color: #fff;
         color: #000;
         margin: 0px;
@@ -34,12 +34,30 @@
         text-decoration: underline;
         cursor: pointer
     }
+    #hover {
+    	background-color: #DDE0DF;
+    	position: absolute;
+    	top: 0px;
+    	left: 0px;
+    	height: 100%;
+    	width: 100%;
+    }
+    .hover {
+    	display: inline;
+    }
+    .innertext {
+    	position: relative;
+    	top: 30%;
+    	left: 45%;
+    }
+    #text {
+    }
     </style>
-</head>
+    </head>
 
 <body>
-	<div style="left: 2%; top: 2%; height: 50px; width: 50px; ;position: absolute; z-index: 100">
-		<i class="fa fa-cog" aria-hidden="true" style="z-index: 101;display: block; height: 50px;width: 50px;"></i>
+	<div id = "hover" class = "in-text">
+		<span class="innertext"><i class="fa fa-cog fa-5" id="text"></i><span><h3>Loading</h3></span></span>
 	</div>
 
     <script src="js/build/three.js"></script>
@@ -62,19 +80,28 @@
         mouseY = 0;
     var windowHalfX = window.innerWidth / 2;
     var windowHalfY = window.innerHeight / 2;
-    var clock = new THREE.Clock();
-    var modelFile;
-    var vmdFiles;
-    var audioFiles;
+    var clock = new THREE.Clock();//实例对象
+    var modelFile;//模型文件
+    var vmdFiles;//动作文件
+    var audioFiles;//声音文件
+    //var hover;//加载遮罩层
+    var onLoadPresent;//全局加载进度
+    //hover = document.body.appendChild('hover');
+    //hover.setAttribute('id', 'hover');
     modelFile = 'model/kizunaai/kizunaai.pmx';
     vmdFiles = ['vmd/youjiannodie.vmd'];
     audioFiles = 'audio/youjiannodie.mp3';
     init();
     animate();
+
     //rerender();
 
     function init() {
         //创建场景和隐藏的audio标签
+        hover = document.createElement('div');
+        loader = document.createElement('span');
+        hover.setAttribute('id', 'hover');
+
         container = document.createElement('div');
         container.setAttribute('id', 'mmd');
         audioplayer = document.createElement('audio');
@@ -84,7 +111,7 @@
         document.body.appendChild(audioplayer);
         document.body.appendChild(container);
         audioplayer.src = audioFiles;
-        setTimeout(audioplayer.play(),2000);
+        //setTimeout(audioplayer.play(),2000);
         //画面初始化
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
         camera.position.z = 30;
@@ -112,7 +139,10 @@
         var onProgress = function(xhr) {
             if (xhr.lengthComputable) {
                 var percentComplete = xhr.loaded / xhr.total * 100;
-                //console.log( Math.round(percentComplete, 2) + '% downloaded' );
+                onLoadPresent = Math.round(percentComplete, 2);
+                if (percentComplete == 100) {
+                	onLoadComplete();
+                }
             }
         };
         var onError = function(xhr) {};
@@ -231,7 +261,15 @@
     	init();
     	animate();
     }
-    function start() {
+    /**function start() {
+    
+    }**/
+    function onLoadComplete() {
+    	document.body.removeChild(document.getElementById('hover'));
+    	var audioplayer = document.getElementById('player');
+    	audioplayer.play();
+    }
+    function onLoadPersent() {
 
     }
     </script>
