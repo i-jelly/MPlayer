@@ -57,7 +57,7 @@
 
 <body>
 	<div id = "hover" class = "in-text">
-		<span class="innertext"><i class="fa fa-cog fa-5" id="text"></i><span><h3>Loading</h3></span></span>
+		<span class="innertext"><span><h3 id="text"> Loading</h3></span></span>
 	</div>
 
     <script src="js/build/three.js"></script>
@@ -80,7 +80,7 @@
         mouseY = 0;
     var windowHalfX = window.innerWidth / 2;
     var windowHalfY = window.innerHeight / 2;
-    var clock = new THREE.Clock();//实例对象
+    var clock = new THREE.Clock();
     var modelFile;//模型文件
     var vmdFiles;//动作文件
     var audioFiles;//声音文件
@@ -111,7 +111,6 @@
         document.body.appendChild(audioplayer);
         document.body.appendChild(container);
         audioplayer.src = audioFiles;
-        //setTimeout(audioplayer.play(),2000);
         //画面初始化
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
         camera.position.z = 30;
@@ -139,10 +138,11 @@
         var onProgress = function(xhr) {
             if (xhr.lengthComputable) {
                 var percentComplete = xhr.loaded / xhr.total * 100;
-                onLoadPresent = Math.round(percentComplete, 2);
+                //onLoadPersent = Math.round(percentComplete, 2);
                 if (percentComplete == 100) {
                 	onLoadComplete();
                 }
+                onLoadPersent(percentComplete);
             }
         };
         var onError = function(xhr) {};
@@ -267,10 +267,10 @@
     function onLoadComplete() {
     	document.body.removeChild(document.getElementById('hover'));
     	var audioplayer = document.getElementById('player');
-    	audioplayer.play();
+    	//audioplayer.play();
+    	setTimeout("audioplayer.play()",1000);
     }
-    function onLoadPersent() {
-
+    function onLoadPersent(persent) {
     }
     </script>
 </body>
