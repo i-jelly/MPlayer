@@ -2,15 +2,15 @@
 <html lang="zh-cn">
 
 <head>
-    <title>three.js webgl - loaders - MMD loader</title>
+    <title>Kizunaai-WebView</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     <link href="css/jquery-accordion-menu.css" rel="stylesheet" type="text/css" />
     <link href="css/font-awesome.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="css/index.css">
-<!--     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
-<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <!--     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
     <style>
@@ -64,35 +64,27 @@
 
 <body>
     <div id="hover" class="in-text">
-            <span class="innertext"><span><h3 id="text"> Loading</h3></span></span>
-        </div>
-    <div class="wrapper">
-
+        <span class="innertext"><span><h3 id="text"> Loading</h3></span></span>
+    </div>
+    <div class="wrapper" id="ct">
         <div class="menu-wrap">
             <div id="jquery-accordion-menu" class="jquery-accordion-menu red">
                 <div class="jquery-accordion-menu-header">Kizuna AI</div>
                 <ul id="demo-list">
                     <li><a href="#">模型 </a><span class="jquery-accordion-menu-label">5</span>
-                        <ul class="submenu">
-                            <li><a href="#">天津风</a></li>
-                            <li><a href="#">爱酱</a></li>
-                            <li><a href="#">Lat Miku</a></li>
-                            <li><a href="#">艾米莉亚</a></li>
-                            <li><a href="#">Ruby</a></li>
+                        <ul class="submenu" id="model_choise">
                         </ul>
                     </li>
                     <li><a href="#">动作 </a><span class="jquery-accordion-menu-label">3</span>
-                        <ul class="submenu">
-                            <li><a href="#">Nekomimi</a></li>
-                            <li><a href="#">Pink Cat</a></li>
-                            <li><a href="#">右肩の蝶</a></li>
+                        <ul class="submenu" id="vmd_choise">
                         </ul>
                     </li>
-                    <li><a href="#">场景 </a><span class="jquery-accordion-menu-label">3</span>
-                        <ul class="submenu">
-                            <li><a href="#">Item1</a></li>
-                            <li><a href="#">Item2</a></li>
-                            <li><a href="#">Item3</a></li>
+                    <li><a href="#">BGM </a><span class="jquery-accordion-menu-label">2</span>
+                        <ul class="submenu" id="musik_choise">
+                        </ul>
+                    </li>
+                    <li><a href="#">背景 </a><span class="jquery-accordion-menu-label">0</span>
+                        <ul class="submenu" id="background_choise">
                         </ul>
                     </li>
                 </ul>
@@ -104,7 +96,7 @@
         </div>
         <button class="menu-button" id="open-button">Open Menu</button>
         <div class="content-wrap" id="box">
-        </div>
+    </div>
         <!-- /content-wrap -->
     </div>
     <script src="js/build/three.js"></script>
@@ -122,6 +114,8 @@
     <script src="js/classie.js"></script>
     <script src="js/index.js"></script>
     <script type="text/javascript">
+    //$("#model_choise").load(function(){alert("loading")});
+    //初始化开始
     var container, stats;
     var mesh, camera, scene, renderer, effect;
     var helper, ikHelper, physicsHelper;
@@ -130,16 +124,81 @@
     var windowHalfX = window.innerWidth / 2;
     var windowHalfY = window.innerHeight / 2;
     var clock = new THREE.Clock();
+    var audioplayer;
     var modelFile; //模型文件
     var vmdFiles; //动作文件
     var audioFiles; //声音文件
+    var bgFiles; //背景文件
     //var hover;//加载遮罩层
     var onLoadPresent; //全局加载进度
     //hover = document.body.appendChild('hover');
     //hover.setAttribute('id', 'hover');
     modelFile = 'model/kizunaai/kizunaai.pmx';
-    vmdFiles = ['vmd/youjiannodie.vmd'];
-    audioFiles = 'audio/youjiannodie.mp3';
+    vmdFiles = ['vmd/pinkcat.vmd'];
+    audioFiles = 'audio/pinkcat.mp3';
+
+    //初始化部分结束
+    //处理选择点击部分
+    var data_model = [{
+            'name': '天津风',
+            'path': 'model/amatsukaze/天津風.pmx',
+            'choose': false,
+        },
+        {
+            'name': '爱酱',
+            'path': 'model/kizunaai/kizunaai.pmx',
+            'choose': true,
+        },
+        {
+            'name': 'Lat Miku',
+            'path': 'model/miku_lat/mikuVer2.31_Normal.pmd',
+            'choose': false,
+        },
+        {
+            'name': '艾米莉亚',
+            'path': 'model/remilia/remilia1.pmx',
+            'choose': false,
+        },
+        {
+            'name': 'Ruby',
+            'path': 'model/ruby-chan/Ruby-chan.pmd',
+            'choose': false,
+        },
+    ];
+    var data_vmd = [{
+            'name': 'Necomimi',
+            'path': 'vmd/nekomimi.vmd',
+            'choose': false,
+        },
+        {
+            'name': 'Pink Cat',
+            'path': 'vmd/pinkcat.vmd',
+            'choose': true,
+        },
+        {
+            'name': '右肩の蝶',
+            'path': 'vmd/youjiannodie.vmd',
+            'choose': false,
+        },
+    ];
+    var data_musik = [{
+            'name': 'Pink Cat',
+            'path': 'audio/pinkcat.mp3',
+            'choose': true,
+        },
+        {
+            'name': '右肩の蝶',
+            'path': 'audio/youjiannodie.mp3',
+            'choose': false,
+        }
+    ];
+    var data_background = [{
+        'name': '233',
+        'path': 'bg/233',
+        'choose': true,
+    }];
+    //初始化素材数组
+
     init();
     animate();
 
@@ -153,14 +212,10 @@
 
         container = document.createElement('div');
         container.setAttribute('id', 'mmd');
-        audioplayer = document.createElement('audio');
-        audioplayer.setAttribute('id', 'player');
-        audioplayer.style.display = "none";
-        audioplayer.style.display = "inline";
-        document.body.appendChild(audioplayer);
+        //document.body.appendChild(audioplayer);
         // document.body.appendChild(container);
         document.getElementById("box").appendChild(container);
-        audioplayer.src = audioFiles;
+        //audioplayer.src = audioFiles;
         //画面初始化
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
         camera.position.z = 30;
@@ -303,25 +358,127 @@
 
     function rerender() {
         //重播先删除再重建画面和音乐播放器
-        var mmd = document.getElementById('mmd');
+        var mmd = document.getElementById('box');
         var audio = document.getElementById('player');
         audio.stop();
-        document.body.removeChild('mmd');
-        document.body.removeChild('audio');
+        
+        $('canvas').remove();
+        $('audioplayer').remove();
+        setTimeout('', 1500);
         init();
         animate();
+        setTimeout('musik_player()', 1500);
+    }
+
+    function musik_player() {
+        audioplayer = document.createElement('audio');
+        audioplayer.setAttribute('id', 'player');
+        audioplayer.setAttribute('autoplay', 'autoplay');
+        audioplayer.src = audioFiles;
+        audioplayer.style.display = "none";
+        document.body.appendChild(audioplayer);
+        audioplayer.play();
     }
     /**function start() {
     
     }**/
     function onLoadComplete() {
-        document.body.removeChild(document.getElementById('hover'));
-        var audioplayer = document.getElementById('player');
-        //audioplayer.play();
-        setTimeout("audioplayer.play()", 1000);
+        if (document.getElementById('hover')) {
+                document.body.removeChild(document.getElementById('hover'));
+        }
+        //setTimeout("musik_player()", 1000);
+
     }
+    //初始化侧边栏的内容
+    $('#model_choise').ready(function() {
+        console.log('model ready');
+        for (i in data_model) {
+            if (data_model[i].choose) {
+                $('#model_choise').append('<li class="active"><a href="#" onclick="model_change(' + i + ')">' + data_model[i].name + "</a></li>")
+            } else {
+                $('#model_choise').append('<li><a href="#" onclick="model_change(' + i + ')">' + data_model[i].name + "</a></li>")
+            }
+        };
+    });
+    $('#vmd_choise').ready(function() {
+        console.log('vmd ready');
+        for (i in data_vmd) {
+            if (data_vmd[i].choose) {
+                $('#vmd_choise').append('<li class="active"><a href="#" onclick="vmd_change(' + i + ')">' + data_vmd[i].name + "</a></li>")
+            } else {
+                $('#vmd_choise').append('<li><a href="#" onclick="vmd_change(' + i + ')">' + data_vmd[i].name + "</a></li>")
+            }
+        };
+    });
+    $('#musik_choise').ready(function() {
+        console.log('music ready');
+        for (i in data_musik) {
+            if (data_musik[i].choose) {
+                $('#musik_choise').append('<li class="active"><a href="#" onclick="musik_change(' + i + ')">' + data_musik[i].name + "</a></li>")
+            } else {
+                $('#musik_choise').append('<li><a href="#" onclick="musik_change(' + i + ')">' + data_musik[i].name + "</a></li>")
+            }
+        }
+    });
+    $('#background_choise').ready(function() {
+        console.log('background ready');
+        for (i in data_background) {
+            if (data_background[i].choose) {
+                $('#background_choise').append('<li class="active"><a href="#" onclick="background_change(' + i + ')">' + data_background[i].name + '</a></li>')
+            } else {
+                $('#background_choise').append('<li><a href="#" onclick="background_change(' + i + ')">' + data_background[i].name + '</a></li>')
+            }
+        }
+    })
+    //初始化侧边栏结束
 
     function onLoadPersent(persent) {}
+
+    //处理素材选择部分开始
+    function model_change(x) {
+        console.log('model changed,rerend page.');
+        modelFile = data_model[x].path;
+        for (i in data_model) {
+            data_model[i].choose = false;
+        }
+        data_model[x].choose = true
+        rerender();
+    }
+
+    function vmd_change(x) {
+        console.log('motion changed,rerend page.');
+        vmdFiles = data_vmd[x].path;
+        for (i in data_vmd) {
+            data_vmd[i].choose = false;
+        }
+        data_vmd[x].choose = true;
+        rerender();
+    }
+
+    function musik_change(x) {
+        console.log('music changed,rerend page');
+        //audioFiles = data_musik[x].path;
+        for (i in data_musik) {
+            data_musik[i].choose = false;
+        }
+        data_musik[x].choose = true;
+        rerender();
+        audioFiles = data_musik[x].path;
+    }
+
+    function background_change(x) {
+        console.log('background changed,rerend page');
+        bgFiles = data_background[x].path;
+        for (i in data_background) {
+            data_background[i].choose = false;
+        }
+        data_background[x].choose = true;
+        rerender();
+    }
+    //处理素材选择部分结束
+    $(window).on('load',function(){
+        setTimeout('musik_player()', 1500);
+    });
     </script>
 </body>
 
