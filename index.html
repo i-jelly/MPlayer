@@ -75,14 +75,14 @@
                         <ul class="submenu" id="model_choise">
                         </ul>
                     </li>
-                    <li><a href="#">动作 </a><span class="jquery-accordion-menu-label">3</span>
+                    <li><a href="#">动作 </a><span class="jquery-accordion-menu-label">5</span>
                         <ul class="submenu" id="vmd_choise">
                         </ul>
                     </li>
-                    <li><a href="#">BGM </a><span class="jquery-accordion-menu-label">2</span>
+                    <!--<li><a href="#">BGM </a><span class="jquery-accordion-menu-label">5</span>
                         <ul class="submenu" id="musik_choise">
                         </ul>
-                    </li>
+                    </li>-->
                     <li><a href="#">背景 </a><span class="jquery-accordion-menu-label">0</span>
                         <ul class="submenu" id="background_choise">
                         </ul>
@@ -137,25 +137,25 @@
     vmdFiles = ['vmd/pinkcat.vmd'];
     audioFiles = 'audio/pinkcat.mp3';
 
-    //初始化部分结束
-    //处理选择点击部分
+    //初始化部分
     var data_model = [{
-            'name': '天津风',
-            'path': 'model/amatsukaze/天津風.pmx',
-            'choose': false,
-        },
-        {
             'name': '爱酱',
             'path': 'model/kizunaai/kizunaai.pmx',
             'choose': true,
         },
+        {
+            'name': '天津风',
+            'path': 'model/amatsukaze/天津風.pmx',
+            'choose': false,
+        },
+        
         {
             'name': 'Lat Miku',
             'path': 'model/miku_lat/mikuVer2.31_Normal.pmd',
             'choose': false,
         },
         {
-            'name': '艾米莉亚',
+            'name': '蕾米莉亚',
             'path': 'model/remilia/remilia1.pmx',
             'choose': false,
         },
@@ -166,22 +166,37 @@
         },
     ];
     var data_vmd = [{
-            'name': 'Necomimi',
-            'path': 'vmd/nekomimi.vmd',
-            'choose': false,
-        },
-        {
             'name': 'Pink Cat',
-            'path': 'vmd/pinkcat.vmd',
+            'path': ['vmd/pinkcat.vmd'],
+            'musik': 'audio/pinkcat.mp3',
             'choose': true,
         },
         {
             'name': '右肩の蝶',
-            'path': 'vmd/youjiannodie.vmd',
+            'path': ['vmd/youjiannodie.vmd'],
+            'musik': 'audio/youjiannodie.mp3',
+            'choose': false,
+        },
+        {
+            'name': '炉心融解',
+            'path': ['vmd/luxinrongjie.vmd'],
+            'musik': 'audio/luxinrongjie.mp3',
+            'choose': false,
+        },
+        {
+            'name': '深海少女',
+            'path': ['vmd/Deep Sea Girl.vmd'],
+            'musik': 'audio/shenhaishaonv.mp3',
+            'choose': false,
+        },
+        {
+            'name': 'Masked bitch',
+            'path': ['vmd/Masked bitch.vmd'],
+            'musik': 'audio/Masked bitch.mp3',
             'choose': false,
         },
     ];
-    var data_musik = [{
+    /**var data_musik = [{
             'name': 'Pink Cat',
             'path': 'audio/pinkcat.mp3',
             'choose': true,
@@ -190,8 +205,23 @@
             'name': '右肩の蝶',
             'path': 'audio/youjiannodie.mp3',
             'choose': false,
+        },
+        {
+            'name': '炉心融解',
+            'path': 'audio/luxinrongjie.mp3',
+            'choose': false,
+        },
+        {
+            'name': '深海少女',
+            'path': 'audio/shenhaishaonv.mp3',
+            'choose': false,
+        },
+        {
+            'name': 'Masked bitch',
+            'path': 'audio/Masked bitch.mp3',
+            'choose': false,
         }
-    ];
+    ];**/
     var data_background = [{
         'name': '233',
         'path': 'bg/233',
@@ -359,15 +389,14 @@
     function rerender() {
         //重播先删除再重建画面和音乐播放器
         var mmd = document.getElementById('box');
-        var audio = document.getElementById('player');
-        audio.stop();
+        //var audio = document.getElementById('player');
+        audioplayer.pause();
         
         $('canvas').remove();
-        $('audioplayer').remove();
-        setTimeout('', 1500);
+        $(audioplayer).remove();
         init();
         animate();
-        setTimeout('musik_player()', 1500);
+        setTimeout("musik_player()",1000);
     }
 
     function musik_player() {
@@ -410,7 +439,7 @@
             }
         };
     });
-    $('#musik_choise').ready(function() {
+    /**$('#musik_choise').ready(function() {
         console.log('music ready');
         for (i in data_musik) {
             if (data_musik[i].choose) {
@@ -419,7 +448,7 @@
                 $('#musik_choise').append('<li><a href="#" onclick="musik_change(' + i + ')">' + data_musik[i].name + "</a></li>")
             }
         }
-    });
+    });**/
     $('#background_choise').ready(function() {
         console.log('background ready');
         for (i in data_background) {
@@ -448,6 +477,7 @@
     function vmd_change(x) {
         console.log('motion changed,rerend page.');
         vmdFiles = data_vmd[x].path;
+        audioFiles = data_vmd[x].musik;
         for (i in data_vmd) {
             data_vmd[i].choose = false;
         }
@@ -455,7 +485,7 @@
         rerender();
     }
 
-    function musik_change(x) {
+    /**function musik_change(x) {
         console.log('music changed,rerend page');
         //audioFiles = data_musik[x].path;
         for (i in data_musik) {
@@ -464,7 +494,7 @@
         data_musik[x].choose = true;
         rerender();
         audioFiles = data_musik[x].path;
-    }
+    }**/
 
     function background_change(x) {
         console.log('background changed,rerend page');
@@ -477,7 +507,7 @@
     }
     //处理素材选择部分结束
     $(window).on('load',function(){
-        setTimeout('musik_player()', 1500);
+        setTimeout('musik_player()', 800);
     });
     </script>
 </body>
