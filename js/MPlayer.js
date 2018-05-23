@@ -33,12 +33,13 @@ MPlayer.prototype.ini = function()
     var windowHalfY = window.innerHeight / 2;
     var clock = new THREE.Clock();
 
+
     init();
     animate();
 
     function init() 
     {
-        document.body.appendChild(container);
+        //document.body.appendChild(container);
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
         // scene
         scene = new THREE.Scene();
@@ -62,7 +63,10 @@ MPlayer.prototype.ini = function()
             {
                 var percentComplete = xhr.loaded / xhr.total * 100;
                 console.log(Math.round(percentComplete, 2) + '% downloaded');
-                //codes here will run zwei mal when loading complete,
+                if ( xhr.loaded == xhr.total)
+                {
+                    //codes here will run zwei mal when loading complete,
+                }
             }
         };
         var onError = function(xhr) {};
