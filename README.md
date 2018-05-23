@@ -1,5 +1,7 @@
-A MMD local player using WebGL,Threejs
-一个MMD本地播放器，使用Threejs
+A MMD local player using WebGL,Threejs  
+
+一个MMD本地播放器，使用Threejs  
+
 Usage:
 ```javascript
 var mp = new MPlayer;
